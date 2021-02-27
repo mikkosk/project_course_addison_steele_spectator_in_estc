@@ -4,13 +4,23 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(stringr)
-library(rstudioapi)
+library(patchwork)
 
 setwd(path)
 
 allData <- read.csv("data_output/estc_student_edition.csv",stringsAsFactors = FALSE)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+link <- read.csv("csv/estc_bernard_link.csv", stringsAsFactors = FALSE, sep = ";") %>% 
+  tidyr::separate_rows(ï..estc) %>%
+  dplyr::rename(id = ï..estc)
+
+bernard_additional <- read.csv("csv/bernard_additional.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id) %>% mutate(bernard = as.integer(bernard))
+
+clean <- read.csv("csv/spectator_clean.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id)
+
+is_pure <- read.csv("csv/pure_spectator.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..pure_specatator)
 
 addison <- allData[which(allData$actor_id == '7413288'), ]
 #	7413288 - Addison id
@@ -22,7 +32,18 @@ spectatorAdditional <- allData %>%
   filter(str_detect(title, '[tT]he Spectators'))
 
 spectatorManual <- allData %>%
-  filter(id %in% c("N22630", "T97981", "T97982", "T147412", "N35324", "N12282", "N471825"))
+  filter(id %in% c("N22630", "T97981", "T97982", 
+                   "T147412", "N35324", "N12282", "N471825",
+                   "T89184", "N10319", "N11313", "N24149",
+                   "T89169", "T89167", "T89168", "T89170",
+                   "T222641", "N35672", "N26920", "N25771", 
+                   "T119967", "T123215", "T131121", "T119955",
+                   "N4192", "T129749", "T155092", "T118537",
+                   "T117520", "T165251", "T179988", "T121516",
+                   "N12117", "N40431", "T129459", "T116459", "N25210",
+                   "T144935", "T167189", "N2051", "N2050",
+                   "N508125", "T170346") | finalWorkField %in% c("1157-miscellaneous works in verse and prose of right honourable joseph addison in three volumes"))
+
 
 # code for manually searching
 # <- allData %>%
@@ -33,10 +54,24 @@ spectatorManual <- allData %>%
 spectator <- allData %>%
   filter_at(.vars = vars(title, remaining_title), .vars_predicate = any_vars(str_detect(., paste(c('[tT]he [sS]pectator[^s]', '[tT]he [sS]pectator$', '[dD]u [sS]pectateur'), collapse="|")))) %>%
   filter(is.na(finalWorkField) | finalWorkField != "383-works of benjamin franklin consisting of his life") %>%
+  filter(title != "The spectator of the stage") %>%
   rbind(spectatorAdditional) %>%
-  rbind(spectatorManual)
+  rbind(spectatorManual) %>%
+  filter(!id %in% clean$id) %>%
+  dplyr::left_join(link, by="id") %>%
+  dplyr::add_row(bernard_additional) %>%
+  mutate(pure = id %in% is_pure$id)
+  
+#fix poor metadata
+spectator$publication_year[spectator$id == "T89184"] <- 1719
+spectator$publication_decade[spectator$id == "T89184"] <- 1710
+
+distinctSpectator <- spectator %>% distinct(id)
 
 test <- allData[which(allData$finalWorkField == '6148-poetical works of joseph addison'), ]
+
+#remove this
+find <- allData %>% filter(id == "T29780")
 
 adSt <- bind_rows(addison, steele)
 
