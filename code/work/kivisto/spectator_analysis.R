@@ -30,4 +30,3 @@ broader_location <- function(df){
   return(final)
 }
 
-lol <- broader_location(spectator)

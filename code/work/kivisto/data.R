@@ -16,7 +16,7 @@ link <- read.csv("csv/estc_bernard_link.csv", stringsAsFactors = FALSE, sep = ";
   tidyr::separate_rows(ï..estc) %>%
   dplyr::rename(id = ï..estc)
 
-bernard_additional <- read.csv("csv/bernard_additional.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id) %>% mutate(bernard = as.integer(bernard))
+bernard_additional <- read.csv("csv/bernard_additional.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id) %>% mutate(bernard = as.integer(bernard)) %>% mutate(is_organization = as.character(is_organization))
 
 clean <- read.csv("csv/spectator_clean.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id)
 
@@ -27,6 +27,10 @@ addison <- allData[which(allData$actor_id == '7413288'), ]
 
 steele <- allData[which(allData$actor_id == '22167754'), ]
 # 22167754 - Steele id
+
+swift <- allData[which(allData$actor_id == "14777110"), ]
+
+tonson <- allData[which(allData$actor_id %in% c("121291376","330654","j_r_tonson_s_draper_1","http://bbti.bodleian.ox.ac.uk/details/?traderid=116058&printer_friendly=true a_b_tonson_t_draper_1")),]
 
 spectatorAdditional <- allData %>%
   filter(str_detect(title, '[tT]he Spectators'))
@@ -60,7 +64,10 @@ spectator <- allData %>%
   filter(!id %in% clean$id) %>%
   dplyr::left_join(link, by="id") %>%
   dplyr::add_row(bernard_additional) %>%
-  mutate(pure = id %in% is_pure$id)
+  mutate(is_organization = as.logical(is_organization)) %>%
+  mutate(pure = id %in% is_pure$id) %>%
+  mutate(finalWorkField = ifelse(pure == TRUE, "spectator", finalWorkField))
+  
   
 #fix poor metadata
 spectator$publication_year[spectator$id == "T89184"] <- 1719
@@ -79,4 +86,5 @@ palette <- c("#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
              "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#C84248", "#8569D5", "#5E738F", "#D1A33D", 
              "#8A7C64", "#599861", "#89C5DA", "#DA5724", "#74D944", "#CE50CA", "#3F4921", "#C0717C", "#CBD588", "#5F7FC7", 
              "#673770", "#D3D93E")
+
 
