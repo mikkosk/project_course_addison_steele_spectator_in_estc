@@ -1,13 +1,17 @@
 draw8 <- function(data, position, title) { 
+  
+  duplicate_actors <- data[duplicated(data$actor_id),]$actor_id
   data <- data %>%
+    filter(!is.na(actor_id)) %>%
+    filter(actor_id != "") %>%
     tidyr::separate_rows(actor_roles_all) %>%
     filter(actor_roles_all == "publisher") %>%
-    group_by(publication_year, publication_decade, actor_id) %>%
-    dplyr::summarise(n=n(), dup=duplicated(actor_id)) %>%
+    mutate(dup = ifelse(actor_id %in% duplicate_actors, TRUE, FALSE)) %>%
     group_by(publication_decade, dup) %>%
-    dplyr::summarise(sum = sum(n))
+    dplyr::summarise(n = n()) %>%
+    filter(publication_decade < 1800)
 
-  figure <- ggplot(data = data, aes(fill=dup, y = sum, x = publication_decade)) +
+  figure <- ggplot(data = data, aes(fill=dup, y = n, x = publication_decade)) +
     geom_bar(position=position, stat="identity") +
     scale_fill_manual(values = palette)+
     ggtitle(title)
@@ -39,3 +43,4 @@ png(file="../../../output/figures/spectator/fig8_spectator_recurring.png",
 print(final8)
 
 dev.off()
+

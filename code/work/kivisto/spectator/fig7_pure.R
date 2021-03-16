@@ -16,25 +16,25 @@ eabp <- estc_and_bernard %>%
   dplyr::summarise(n = n()) %>%
   arrange(n)
 
-draw7 <- function(data, position) {
+draw7 <- function(data, position, title) {
   figure <- ggplot(data = data, aes(fill=pure, y = n, x = publication_decade)) +
     geom_bar(position=position, stat="identity") +
     scale_fill_manual(values = palette)+
-    ggtitle("Plain Data %")
+    ggtitle(title)
   return(figure)
 }
 
-fig7.1 <- draw7(jsp, "fill")
+fig7.1 <- draw7(jsp, "fill", "Plain data")
 
-fig7.2 <- draw7(eop, "fill")
+fig7.2 <- draw7(eop, "fill", "ESTC only")
 
-fig7.3 <- draw(eabp, "fill")
+fig7.3 <- draw7(eabp, "fill", "ESTC & Bernard")
 
-fig7.4 <- draw7(jsp, "stack")
+fig7.4 <- draw7(jsp, "stack", "Plain data")
 
-fig7.5 <- draw7(eop, "stack")
+fig7.5 <- draw7(eop, "stack", "ESTC only")
 
-fig7.6 <- draw(eabp, "stack")
+fig7.6 <- draw7(eabp, "stack", "ESTC & Bernard")
 
 final7 <- fig7.1 + fig7.2 + fig7.3 + fig7.4 + fig7.5 + fig7.6
 

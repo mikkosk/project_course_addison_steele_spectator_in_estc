@@ -18,7 +18,7 @@ link <- read.csv("csv/estc_bernard_link.csv", stringsAsFactors = FALSE, sep = ";
 
 bernard_additional <- read.csv("csv/bernard_additional.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id) %>% mutate(bernard = as.integer(bernard)) %>% mutate(is_organization = as.character(is_organization))
 
-clean <- read.csv("csv/spectator_clean.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id)
+clean <- read.csv("csv/spectator_clean.csv", stringsAsFactors = FALSE, sep = ";")
 
 is_pure <- read.csv("csv/pure_spectator.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..pure_specatator)
 

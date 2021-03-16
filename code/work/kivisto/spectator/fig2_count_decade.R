@@ -9,6 +9,7 @@ combined_data2 <- jsd %>% mutate(set = "Plain ESTC") %>%
   rbind(pond %>% mutate(set = "Pure Spectator"))
 
 draw2 <- function(data, title) {
+  data <- data %>% filter(publication_decade < 1800)
   return(ggplot(data=data, aes(publication_decade, y = n)) +
            geom_line() +
            geom_point() + ggtitle(title))
