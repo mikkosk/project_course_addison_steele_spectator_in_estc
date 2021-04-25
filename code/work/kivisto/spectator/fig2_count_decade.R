@@ -1,7 +1,7 @@
-jsd <- distinct(spectator, .keep_all = TRUE) %>% count(publication_decade) 
-eond <- distinct(estc_only, .keep_all = TRUE) %>% count(publication_decade)
-eabnd <- distinct(estc_and_bernard, .keep_all = TRUE) %>% count(publication_decade)
-pond <- distinct(pure_only, .keep_all = TRUE) %>% count(publication_decade)
+jsd <- spectator %>% distinct(id, .keep_all = TRUE) %>% count(publication_decade) 
+eond <- estc_only %>% distinct(id, .keep_all = TRUE) %>% count(publication_decade)
+eabnd <- estc_and_bernard %>% distinct(id, .keep_all = TRUE) %>% count(publication_decade)
+pond <- pure_only %>% distinct(id, .keep_all = TRUE) %>% count(publication_decade)
 
 combined_data2 <- jsd %>% mutate(set = "Plain ESTC") %>% 
   rbind(eond %>% mutate(set = "Only ESTC")) %>% 
@@ -40,3 +40,4 @@ png(file="../../../output/figures/spectator/fig2_decade_count_combined.png",
 print(combined2)
 
 dev.off()
+

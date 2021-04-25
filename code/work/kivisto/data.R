@@ -8,29 +8,27 @@ library(patchwork)
 
 setwd(path)
 
+#Step 1
+
 allData <- read.csv("data_output/estc_student_edition.csv",stringsAsFactors = FALSE)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+#Step 2
 
 link <- read.csv("csv/estc_bernard_link.csv", stringsAsFactors = FALSE, sep = ";") %>% 
   tidyr::separate_rows(ï..estc) %>%
   dplyr::rename(id = ï..estc)
 
-bernard_additional <- read.csv("csv/bernard_additional.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..id) %>% mutate(bernard = as.integer(bernard)) %>% mutate(is_organization = as.character(is_organization))
+bernard_additional <- read.csv("csv/bernard_additional.csv", stringsAsFactors = FALSE, sep = ";") %>% 
+dplyr::rename(id = ï..id) %>% mutate(bernard = as.integer(bernard)) %>% mutate(is_organization = as.character(is_organization))
 
 clean <- read.csv("csv/spectator_clean.csv", stringsAsFactors = FALSE, sep = ";")
 
 is_pure <- read.csv("csv/pure_spectator.csv", stringsAsFactors = FALSE, sep = ";") %>% dplyr::rename(id = ï..pure_specatator)
 
-addison <- allData[which(allData$actor_id == '7413288'), ]
-#	7413288 - Addison id
 
-steele <- allData[which(allData$actor_id == '22167754'), ]
-# 22167754 - Steele id
-
-swift <- allData[which(allData$actor_id == "14777110"), ]
-
-tonson <- allData[which(allData$actor_id %in% c("121291376","330654","j_r_tonson_s_draper_1","http://bbti.bodleian.ox.ac.uk/details/?traderid=116058&printer_friendly=true a_b_tonson_t_draper_1")),]
+#Step 3
 
 spectatorAdditional <- allData %>%
   filter(str_detect(title, '[tT]he Spectators'))
@@ -68,17 +66,19 @@ spectator <- allData %>%
   mutate(pure = id %in% is_pure$id) %>%
   mutate(finalWorkField = ifelse(pure == TRUE, "spectator", finalWorkField))
   
-  
-#fix poor metadata
+# Step 4
+
 spectator$publication_year[spectator$id == "T89184"] <- 1719
 spectator$publication_decade[spectator$id == "T89184"] <- 1710
+
+
+
+# Further steps
 
 distinctSpectator <- spectator %>% distinct(id)
 
 test <- allData[which(allData$finalWorkField == '6148-poetical works of joseph addison'), ]
 
-#remove this
-find <- allData %>% filter(id == "T29780")
 
 adSt <- bind_rows(addison, steele)
 
@@ -87,4 +87,25 @@ palette <- c("#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
              "#8A7C64", "#599861", "#89C5DA", "#DA5724", "#74D944", "#CE50CA", "#3F4921", "#C0717C", "#CBD588", "#5F7FC7", 
              "#673770", "#D3D93E")
 
+
+cleanFromTatler <- c("N14092", "N23273", "N26283", "N4195", "N48772", "N54768", "N60787", "N63185", 
+                     "P6008", "P1578", "P1711", "P1870", "P1872", "P2044", "P2124", "P2205", "P2447", 
+                     "P6043", "P2935", "P2933", "P3016", "P3057", "P2058", "P6163", "P6421", "T37488", 
+                     "T174033", "T180115", "T182405", "T216099", "T64499", "T69227", "T72507",
+                     "T78334", "T89027", "T113826", "T114629", "T126142", "T130548", "T135288",
+                     "T140923", "T147412", "T147701", "T47014", "T231722", "T231949", "N60788")
+tatler <- allData %>%
+  filter_at(.vars = vars(title, remaining_title), .vars_predicate = any_vars(str_detect(., paste(c('[tT]he [tT]atler[^s]', '[tT]he [tT]atler$', '[tT]atler'), collapse="|")))) %>%
+  filter(!id %in% cleanFromTatler)
+
+
+addison <- allData[which(allData$actor_id == '7413288'), ]
+#	7413288 - Addison id
+
+steele <- allData[which(allData$actor_id == '22167754'), ]
+# 22167754 - Steele id
+
+swift <- allData[which(allData$actor_id == "14777110"), ]
+
+tonson <- allData[which(allData$actor_id %in% c("121291376","330654","j_r_tonson_s_draper_1","http://bbti.bodleian.ox.ac.uk/details/?traderid=116058&printer_friendly=true a_b_tonson_t_draper_1")),]
 

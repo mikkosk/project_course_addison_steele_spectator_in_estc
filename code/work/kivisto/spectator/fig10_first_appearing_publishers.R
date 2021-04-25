@@ -8,7 +8,8 @@ draw10 <- function(data, position, title) {
     slice(1) %>%
     ungroup() %>%
     group_by(publication_decade) %>%
-    dplyr::summarise(n=n())  %>%
+    dplyr::summarise(n=n()) %>%
+    filter(publication_decade > 1700) %>%
     filter(publication_decade < 1800)
 
   figure <- ggplot(data = data, aes(publication_decade, y = n)) +
@@ -27,7 +28,11 @@ fig10.3 <- draw10(estc_and_bernard, "stack", "ESTC and Bernard")
 
 fig10.4 <- draw10(pure_only, "stack", "Pure Spectator")
 
-final10 <- fig10.1 + fig10.2 + fig10.3 + fig10.4
+fig10.5 <- draw10(tatler, "stack", "Tatler")
+
+fig10.6 <- draw10(allData, "stack", "Whole ESTC")
+
+final10 <- fig10.1 + fig10.2 + fig10.3 + fig10.4 + fig10.5 + fig10.6
 
 png(file="../../../output/figures/spectator/fig10_new_publishers_by_decade.png",
     width=1200, height=700)

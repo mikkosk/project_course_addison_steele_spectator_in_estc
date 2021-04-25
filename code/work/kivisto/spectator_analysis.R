@@ -2,7 +2,7 @@ estc_only <- spectator %>% filter(is.na(bernard))
 estc_and_bernard <- spectator %>% filter(!is.na(bernard))
 pure_only <- spectator %>% filter(pure == TRUE)
 distinct_estc <- distinct(estc_only, id, .keep_all = TRUE)
-distinct_all <- spectator %>% distinct(.keep_all = TRUE)
+distinct_all <- spectator %>% distinct(id, .keep_all = TRUE)
 
 namedColors <- as.character(palette[1:18])
 place <- distinct(spectator, publication_place_752) %>% cbind(namedColors)

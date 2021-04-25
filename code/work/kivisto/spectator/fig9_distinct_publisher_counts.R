@@ -5,7 +5,8 @@ draw9 <- function(data, position, title) {
     distinct(actor_id, publication_decade, .keep_all = TRUE) %>%
     group_by(publication_decade) %>%
     dplyr::summarise(n=n())  %>%
-    filter(publication_decade < 1800)
+    filter(publication_decade > 1700) %>%
+    filter(publication_decade <  1800)
   
   figure <- ggplot(data = data, aes(publication_decade, y = n)) +
     geom_bar(position=position, stat="identity") +
@@ -23,7 +24,11 @@ fig9.3 <- draw9(estc_and_bernard, "stack", "ESTC and Bernard")
 
 fig9.4 <- draw9(pure_only, "stack", "Pure Spectator")
 
-final9 <- fig9.1 + fig9.2 + fig9.3 + fig9.4
+fig9.5 <- draw9(tatler, "stack", "Tatler")
+
+fig9.6 <- draw9(allData, "stack", "Whole ESTC")
+
+final9 <- fig9.1 + fig9.2 + fig9.3 + fig9.4 + fig9.5 + fig9.6
 
 png(file="../../../output/figures/spectator/fig9_distinct_publishers_by_decade.png",
     width=1200, height=700)

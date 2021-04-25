@@ -1,5 +1,7 @@
 draw13 <- function(data, position, title) { 
   data <- data %>%
+    filter(publication_decade > 1700) %>%
+    filter(publication_decade < 1800) %>%
     tidyr::separate_rows(actor_roles_all) %>%
     filter(actor_roles_all == "publisher") %>%
     filter(!is.na(actor_id)) %>%
@@ -25,7 +27,11 @@ fig13.3 <- draw13(estc_and_bernard, "fill", "ESTC and Bernard")
 
 fig13.4 <- draw13(pure_only, "fill", "Pure Spectator")
 
-final13 <- fig13.1 + fig13.2 + fig13.3 + fig13.4
+fig13.5 <- draw13(tatler, "fill", "Tatler")
+
+fig13.6 <- draw13(allData, "fill", "Whole ESTC")
+
+final13 <- fig13.1 + fig13.2 + fig13.3 + fig13.4 + fig13.5 + fig13.6
 
 png(file="../../../output/figures/spectator/fig13_organization.png",
     width=1200, height=700)

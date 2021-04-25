@@ -1,4 +1,7 @@
 draw12 <- function(data, position, title) { 
+  data <- data %>%
+    filter(publication_decade > 1700) %>%
+    filter(publication_decade < 1800)
   
   publishers <- data %>%
     tidyr::separate_rows(actor_roles_all) %>%
@@ -37,7 +40,11 @@ fig12.3 <- draw12(estc_and_bernard, "stack", "ESTC and Bernard")
 
 fig12.4 <- draw12(pure_only, "stack", "Pure Spectator")
 
-final12 <- fig12.1 + fig12.2 + fig12.3 + fig12.4
+fig12.5 <- draw12(tatler, "stack", "Tatler")
+
+fig12.6 <- draw12(allData, "stack", "Whole ESTC")
+
+final12 <- fig12.1 + fig12.2 + fig12.3 + fig12.4 + fig12.5 + fig12.6
 
 png(file="../../../output/figures/spectator/fig12_entries_per_publisher.png",
     width=1200, height=700)
